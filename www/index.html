@@ -2141,6 +2141,16 @@
       }
     }
 
+    function bindBeaconStatus() {
+      if (!window.BeaconBLE || !BeaconBLE.onStatusChange) return;
+      BeaconBLE.onStatusChange((nextStatus) => {
+        if (nextStatus === "disconnected" && state.connected && !state.simulated) {
+          setConnected(false, false);
+          showToast("BEACON disconnected. Pair again when it is nearby.");
+        }
+      });
+    }
+
     function onBeaconNotification(event) {
       const value = event.target.value;
       let message = "";
@@ -2492,6 +2502,7 @@
     bindEvents();
     bindOnboarding();
     bindPinModal();
+    bindBeaconStatus();
 
     if (!state.onboardingDone) {
       $("#onboarding").classList.add("show");
