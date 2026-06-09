@@ -4,7 +4,10 @@ dist/
 build/
 .env
 .env.local
+telegram_ble_gateway.local.json
 *.log
+__pycache__/
+*.py[cod]
 
 # iOS
 ios/App/Pods/
