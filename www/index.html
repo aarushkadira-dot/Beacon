@@ -1,0 +1,2504 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#f6f7f3" />
+  <title>BEACON App Prototype</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f3;
+      --ink: #141711;
+      --muted: #62695d;
+      --line: #d8ddd0;
+      --panel: #ffffff;
+      --panel-strong: #edf4ea;
+      --green: #2f7d4f;
+      --green-dark: #1e5636;
+      --red: #d3423f;
+      --red-dark: #9e2e2c;
+      --amber: #d9902c;
+      --blue: #2d6d9f;
+      --cyan: #5ba7a5;
+      --shadow: 0 20px 70px rgba(31, 35, 27, 0.18);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(120deg, rgba(47, 125, 79, 0.14), transparent 34%),
+        linear-gradient(300deg, rgba(211, 66, 63, 0.12), transparent 36%),
+        var(--bg);
+      color: var(--ink);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(45, 109, 159, 0.34);
+      outline-offset: 2px;
+    }
+
+    .app-shell {
+      width: min(1180px, calc(100vw - 32px));
+      min-height: calc(100vh - 32px);
+      margin: 16px auto;
+      display: grid;
+      grid-template-columns: minmax(300px, 430px) 1fr;
+      gap: 18px;
+      align-items: stretch;
+      overflow-x: hidden;
+    }
+
+    .phone {
+      background: #191b17;
+      border-radius: 34px;
+      padding: 12px;
+      box-shadow: var(--shadow);
+      min-height: 780px;
+      min-width: 0;
+    }
+
+    .screen {
+      min-height: 756px;
+      background: var(--bg);
+      border-radius: 26px;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      position: relative;
+      min-width: 0;
+    }
+
+    .status-bar {
+      height: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 18px 0;
+      font-size: 12px;
+      font-weight: 700;
+      color: #31372e;
+    }
+
+    .status-dots {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .signal-dot {
+      width: 4px;
+      height: 11px;
+      border-radius: 3px;
+      background: #252a24;
+    }
+
+    .signal-dot:nth-child(1) {
+      height: 5px;
+    }
+
+    .signal-dot:nth-child(2) {
+      height: 8px;
+    }
+
+    .battery {
+      width: 24px;
+      height: 11px;
+      border: 1.5px solid #252a24;
+      border-radius: 3px;
+      position: relative;
+    }
+
+    .battery::after {
+      content: "";
+      width: 3px;
+      height: 5px;
+      border-radius: 0 2px 2px 0;
+      background: #252a24;
+      position: absolute;
+      right: -5px;
+      top: 2px;
+    }
+
+    .battery-fill {
+      width: 72%;
+      height: 100%;
+      background: var(--green);
+      border-radius: 2px;
+    }
+
+    .app-top {
+      padding: 10px 18px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, #ffffff 0 16%, transparent 17%),
+        conic-gradient(from 210deg, var(--red), var(--amber), var(--green), var(--blue), var(--red));
+      box-shadow: inset 0 0 0 6px #f8faf5;
+      flex: 0 0 auto;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 32px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.74);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--red);
+      box-shadow: 0 0 0 5px rgba(211, 66, 63, 0.12);
+    }
+
+    .dot.connected {
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(47, 125, 79, 0.12);
+    }
+
+    .content {
+      overflow: auto;
+      padding: 0 18px 20px;
+      min-width: 0;
+    }
+
+    .view {
+      display: none;
+      animation: rise 180ms ease-out;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      margin: 0 0 12px;
+      box-shadow: 0 10px 32px rgba(29, 34, 24, 0.08);
+      min-width: 0;
+    }
+
+    .panel.flush {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .panel-title h2,
+    .panel-title h3 {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .panel-title span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .device-card {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 14px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .device-render {
+      width: 100%;
+      min-height: 136px;
+      border-radius: 26px;
+      background:
+        linear-gradient(155deg, #30382f 0%, #171b16 100%);
+      position: relative;
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 18px 28px rgba(255, 255, 255, 0.07),
+        0 14px 28px rgba(20, 23, 17, 0.24);
+    }
+
+    .device-render::before {
+      content: "";
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, #f7faf3 0 13%, transparent 14%),
+        conic-gradient(from 210deg, var(--red), var(--amber), var(--green), var(--blue), var(--red));
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.08);
+    }
+
+    .device-render::after {
+      content: "BEACON";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 18px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1.4px;
+    }
+
+    .muted {
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 11px;
+    }
+
+    .metric {
+      min-width: 0;
+      min-height: 66px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #f8faf4;
+      padding: 9px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .metric b {
+      display: block;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .primary-button,
+    .secondary-button,
+    .danger-button,
+    .quiet-button {
+      min-height: 44px;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 900;
+      width: 100%;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+    }
+
+    .primary-button {
+      background: var(--green);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(47, 125, 79, 0.25);
+    }
+
+    .primary-button:hover,
+    .secondary-button:hover,
+    .danger-button:hover,
+    .quiet-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .secondary-button {
+      background: #e9f0e4;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .danger-button {
+      background: var(--red);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(211, 66, 63, 0.24);
+    }
+
+    .quiet-button {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .alert-strip {
+      min-height: 68px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      background: #fff7f3;
+      border: 1px solid rgba(211, 66, 63, 0.22);
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .alert-strip.inactive {
+      background: #f3f7f0;
+      border-color: rgba(47, 125, 79, 0.2);
+    }
+
+    .alert-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(211, 66, 63, 0.14);
+      color: var(--red-dark);
+      font-weight: 1000;
+      font-size: 20px;
+    }
+
+    .alert-strip.inactive .alert-icon {
+      background: rgba(47, 125, 79, 0.14);
+      color: var(--green-dark);
+    }
+
+    .alert-copy strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 3px;
+      overflow-wrap: anywhere;
+    }
+
+    .alert-copy span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .mini-button {
+      min-height: 34px;
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: var(--ink);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .contact-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .contact-row {
+      min-height: 58px;
+      display: grid;
+      grid-template-columns: 38px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px;
+      background: #fdfefb;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 1000;
+      color: #fff;
+      background: var(--blue);
+    }
+
+    .avatar.coral {
+      background: var(--red);
+    }
+
+    .avatar.green {
+      background: var(--green);
+    }
+
+    .contact-row strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .contact-row small {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .toggle input {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .track {
+      width: 44px;
+      height: 26px;
+      border-radius: 99px;
+      background: #cfd6c8;
+      transition: background 160ms ease;
+    }
+
+    .track::after {
+      content: "";
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      position: absolute;
+      left: 3px;
+      top: 3px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+      transition: transform 160ms ease;
+    }
+
+    .toggle input:checked + .track {
+      background: var(--green);
+    }
+
+    .toggle input:checked + .track::after {
+      transform: translateX(18px);
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 9px;
+    }
+
+    .field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .map {
+      min-height: 306px;
+      background:
+        linear-gradient(90deg, rgba(47, 125, 79, 0.12) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(47, 125, 79, 0.12) 1px, transparent 1px),
+        linear-gradient(140deg, #dce8d4, #f8f4df 58%, #d9eceb);
+      background-size: 36px 36px, 36px 36px, auto;
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+    }
+
+    .road {
+      position: absolute;
+      height: 16px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(118, 128, 104, 0.26);
+      transform-origin: left center;
+    }
+
+    .road.one {
+      width: 320px;
+      left: -20px;
+      top: 75px;
+      transform: rotate(16deg);
+    }
+
+    .road.two {
+      width: 360px;
+      left: 65px;
+      top: 188px;
+      transform: rotate(-20deg);
+    }
+
+    .road.three {
+      width: 260px;
+      left: 115px;
+      top: 14px;
+      transform: rotate(76deg);
+    }
+
+    .route-line {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .route-line path {
+      stroke: var(--blue);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      filter: drop-shadow(0 2px 2px rgba(45, 109, 159, 0.2));
+    }
+
+    .pin,
+    .responder-pin {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 18px rgba(20, 23, 17, 0.28);
+    }
+
+    .pin {
+      left: 65%;
+      top: 38%;
+      background: var(--red);
+    }
+
+    .responder-pin {
+      left: 22%;
+      top: 68%;
+      background: var(--green);
+    }
+
+    .pin::after,
+    .responder-pin::after {
+      content: "";
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .map-label {
+      position: absolute;
+      padding: 7px 9px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 18px rgba(20, 23, 17, 0.12);
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    .map-label.alert {
+      left: 51%;
+      top: 31%;
+    }
+
+    .map-label.responder {
+      left: 9%;
+      top: 58%;
+    }
+
+    .eta-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .eta-box {
+      border-radius: 8px;
+      background: #f8faf4;
+      border: 1px solid var(--line);
+      min-height: 58px;
+      padding: 9px;
+    }
+
+    .eta-box strong {
+      display: block;
+      font-size: 17px;
+    }
+
+    .eta-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .event {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 9px;
+      align-items: start;
+    }
+
+    .event-marker {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--line);
+      background: #fff;
+    }
+
+    .event-marker.active {
+      border-color: var(--red);
+      background: rgba(211, 66, 63, 0.12);
+    }
+
+    .event h3 {
+      margin: 1px 0 2px;
+      font-size: 13px;
+    }
+
+    .event p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.35;
+    }
+
+    .tabbar {
+      min-height: 76px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(16px);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 8px 10px 14px;
+      gap: 5px;
+    }
+
+    .tab {
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      display: grid;
+      gap: 3px;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 900;
+      min-width: 0;
+      min-height: 50px;
+    }
+
+    .tab svg {
+      width: 21px;
+      height: 21px;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      fill: none;
+    }
+
+    .tab.active {
+      background: #e8efe2;
+      color: var(--green-dark);
+    }
+
+    .console {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      min-height: 780px;
+    }
+
+    .console h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: 0;
+    }
+
+    .console p {
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .console-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .console-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+      min-height: 98px;
+    }
+
+    .console-card b {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .console-card span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.35;
+      display: block;
+    }
+
+    .responder-view {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .desktop-panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .desktop-panel h3 {
+      margin: 0 0 8px;
+    }
+
+    .code-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .code-list li {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 8px;
+      align-items: start;
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .num {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #eef4e9;
+      color: var(--green-dark);
+      font-size: 12px;
+      font-weight: 1000;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(16px);
+      min-width: min(360px, calc(100vw - 32px));
+      min-height: 48px;
+      border-radius: 8px;
+      background: #171b16;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.26);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+      z-index: 20;
+      font-weight: 800;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    .toast button {
+      color: #b9e6c9;
+      background: transparent;
+      font-weight: 1000;
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 2.3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: 0 0 auto;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 920px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+        width: min(390px, 100vw);
+        margin: 10px auto;
+      }
+
+      .console {
+        min-height: auto;
+      }
+
+      .responder-view,
+      .console-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .phone {
+        min-height: auto;
+      }
+
+      .screen {
+        min-height: calc(100vh - 44px);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app-shell {
+        width: min(390px, 100vw);
+        margin: 0;
+      }
+
+      .phone {
+        border-radius: 0;
+        padding: 0;
+      }
+
+      .screen {
+        border-radius: 0;
+      }
+
+      .device-card {
+        grid-template-columns: 1fr;
+      }
+
+      .device-render {
+        min-height: 120px;
+      }
+
+      .button-row,
+      .eta-row {
+        grid-template-columns: 1fr;
+      }
+
+      .alert-strip {
+        grid-template-columns: 44px 1fr;
+      }
+
+      .alert-strip .mini-button {
+        grid-column: 1 / -1;
+      }
+
+      .panel-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .app-top {
+        gap: 8px;
+      }
+
+      .pill {
+        flex: 0 0 34px;
+        justify-content: center;
+        padding: 7px;
+      }
+
+      .pill #connectionText {
+        display: none;
+      }
+    }
+
+    /* ---------- Onboarding + modal overlays ---------- */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+      padding: calc(env(safe-area-inset-top) + 28px) 24px calc(env(safe-area-inset-bottom) + 24px);
+      animation: fadeIn 200ms ease;
+    }
+    .overlay.show { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .overlay .ob-step { display: none; flex: 1; flex-direction: column; gap: 18px; }
+    .overlay .ob-step.active { display: flex; }
+    .overlay h1 {
+      font-size: 28px; line-height: 1.15; margin: 0; letter-spacing: -0.02em;
+    }
+    .overlay p.lead { color: var(--muted); margin: 0; font-size: 15px; line-height: 1.45; }
+    .overlay .ob-progress {
+      display: flex; gap: 6px; margin-bottom: 8px;
+    }
+    .overlay .ob-progress span {
+      flex: 1; height: 4px; border-radius: 2px; background: var(--line);
+    }
+    .overlay .ob-progress span.done { background: var(--green); }
+    .overlay input, .overlay .pin-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      font-size: 16px;
+      color: var(--ink);
+    }
+    .overlay .pin-input {
+      letter-spacing: 0.6em;
+      text-align: center;
+      font-size: 22px;
+      font-variant-numeric: tabular-nums;
+    }
+    .overlay .row { display: flex; gap: 10px; }
+    .overlay .row > input { flex: 1; min-width: 0; }
+    .overlay .ob-list {
+      display: flex; flex-direction: column; gap: 8px;
+      max-height: 240px; overflow-y: auto;
+    }
+    .overlay .ob-chip {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px; border-radius: 12px;
+      background: var(--panel-strong);
+      font-size: 14px;
+    }
+    .overlay .ob-chip button {
+      background: transparent; color: var(--red); font-weight: 600; padding: 4px 8px;
+    }
+    .overlay .ob-cta {
+      width: 100%; padding: 16px; border-radius: 16px;
+      background: var(--ink); color: #fff; font-weight: 600; font-size: 16px;
+    }
+    .overlay .ob-cta:disabled { opacity: 0.4; }
+    .overlay .ob-secondary {
+      width: 100%; padding: 14px; border-radius: 14px;
+      background: transparent; color: var(--muted); font-weight: 500; font-size: 14px;
+    }
+    .overlay .ob-footer { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+    .overlay .ob-error { color: var(--red); font-size: 13px; min-height: 18px; }
+
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(20, 23, 17, 0.55);
+      z-index: 10000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      animation: fadeIn 160ms ease;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-sheet {
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      border-radius: 22px 22px 0 0;
+      padding: 24px 22px calc(env(safe-area-inset-bottom) + 24px);
+      display: flex; flex-direction: column; gap: 14px;
+      animation: slideUp 220ms ease;
+    }
+    @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-sheet h2 { margin: 0; font-size: 20px; }
+    .modal-sheet p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .modal-sheet .pin-input { letter-spacing: 0.6em; text-align: center; font-size: 24px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; }
+    .modal-sheet .modal-actions { display: flex; gap: 10px; }
+    .modal-sheet .modal-actions button { flex: 1; padding: 14px; border-radius: 14px; font-weight: 600; font-size: 15px; }
+    .modal-sheet .modal-confirm { background: var(--ink); color: #fff; }
+    .modal-sheet .modal-cancel { background: var(--panel-strong); color: var(--ink); }
+    .modal-sheet .modal-error { color: var(--red); font-size: 13px; min-height: 18px; }
+
+    /* ---------- Native app mode (phone-sized viewports) ---------- */
+    html, body {
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+    }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    @media (max-width: 820px) {
+      body {
+        background: var(--bg);
+        min-height: 100vh;
+        min-height: 100dvh;
+      }
+      /* Hide the desktop explanation/console panel — only the phone shows in-app */
+      .console, aside.console { display: none !important; }
+
+      /* Drop the fake phone bezel; the device itself is the bezel now */
+      .app-shell {
+        width: 100%;
+        max-width: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+        margin: 0;
+        display: block;
+        gap: 0;
+        overflow: visible;
+      }
+      .phone {
+        background: var(--bg);
+        border-radius: 0;
+        padding: 0;
+        box-shadow: none;
+        min-height: 100vh;
+        min-height: 100dvh;
+        width: 100%;
+      }
+      html, body { height: 100%; overflow: hidden; }
+      .app-shell, .phone {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+      }
+      .screen {
+        border-radius: 0;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: 0;
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        grid-template-rows: auto 1fr auto;
+      }
+      /* The real iOS status bar replaces the fake one */
+      .status-bar { display: none !important; }
+      /* Give the header a touch more breathing room below the Dynamic Island */
+      .app-top { padding-top: 14px; padding-bottom: 10px; }
+      /* Tab bar honors the home indicator */
+      .tabbar { padding-bottom: calc(env(safe-area-inset-bottom) + 10px); }
+      /* Toast clears the home indicator */
+      .toast { bottom: calc(env(safe-area-inset-bottom) + 20px); }
+      /* Content padding tightens up so cards don't feel cramped against device edges */
+      .content { padding: 0 14px 16px; }
+      /* Softer device-card stacking on narrow screens */
+      .panel { border-radius: 16px; }
+      .panel.flush { border-radius: 16px; }
+    }
+
+    /* ============================================================
+       BRAND THEME — pure black, vivid red, bold white
+       Matches the BEACON slideshow design system.
+       ============================================================ */
+    :root {
+      --bg: #000;
+      --ink: #fff;
+      --muted: #8a8a8a;
+      --line: #1f1f1f;
+      --panel: #0d0d0d;
+      --panel-strong: #161616;
+      --red: #ef3b3b;
+      --red-dark: #b91d1d;
+      color-scheme: dark;
+    }
+    body {
+      background: #000 !important;
+      color: #fff;
+    }
+    .app-shell, .phone, .screen { background: #000 !important; }
+    .screen { color: #fff; }
+
+    /* App top header — BEACON wordmark */
+    .app-top { background: transparent; padding: 12px 16px 8px; }
+    .brand-mark { display: none; }
+    .brand h1 {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      color: var(--red);
+      text-transform: uppercase;
+    }
+    .brand p { display: none; }
+
+    .pill {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: #fff;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .pill .dot { box-shadow: 0 0 0 4px rgba(239,59,59,0.18); }
+    .pill .dot.connected { box-shadow: 0 0 0 4px rgba(47,125,79,0.22); }
+
+    /* Red accent stripe under header (like the slideshow) */
+    .app-top::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0;
+      top: calc(env(safe-area-inset-top) + 56px);
+      height: 2px;
+      background: var(--red);
+      opacity: 0.85;
+    }
+    .app-top { position: relative; }
+
+    /* All panels go dark */
+    .panel, .panel.flush {
+      background: var(--panel) !important;
+      border: 1px solid var(--line) !important;
+      color: #fff;
+      box-shadow: none !important;
+      border-radius: 18px !important;
+    }
+    .panel h2 { color: #fff !important; }
+    .panel-title span { color: var(--muted) !important; }
+    .muted { color: var(--muted) !important; }
+
+    /* Tab bar — dark */
+    .tabbar {
+      background: rgba(0,0,0,0.92) !important;
+      border-top: 1px solid var(--line) !important;
+      backdrop-filter: blur(20px);
+    }
+    .tab { color: var(--muted); }
+    .tab.active { background: rgba(239,59,59,0.12); color: var(--red); }
+
+    /* Inputs */
+    input, select, textarea {
+      background: var(--panel-strong) !important;
+      color: #fff !important;
+      border: 1px solid var(--line) !important;
+    }
+    input::placeholder { color: #5a5a5a; }
+
+    /* Onboarding overlay re-themed */
+    .overlay { background: #000 !important; color: #fff; }
+    .overlay h1 { color: #fff; }
+    .overlay p.lead { color: var(--muted); }
+    .overlay .ob-progress span { background: #1f1f1f; }
+    .overlay .ob-progress span.done { background: var(--red); }
+    .overlay input, .overlay .pin-input {
+      background: var(--panel-strong) !important;
+      color: #fff !important;
+      border: 1px solid var(--line) !important;
+    }
+    .overlay .ob-chip { background: var(--panel) !important; color: #fff; border: 1px solid var(--line); }
+    .overlay .ob-chip button { color: var(--red); }
+    .overlay .ob-cta { background: var(--red); color: #fff; }
+    .overlay .ob-secondary { color: var(--muted); }
+    .overlay .ob-error { color: var(--red); }
+
+    /* PIN modal dark */
+    .modal-backdrop { background: rgba(0,0,0,0.75); }
+    .modal-sheet { background: var(--panel); border: 1px solid var(--line); color: #fff; }
+    .modal-sheet h2, .modal-sheet p { color: #fff; }
+    .modal-sheet p { color: var(--muted); }
+    .modal-sheet .modal-cancel { background: var(--panel-strong); color: #fff; }
+    .modal-sheet .modal-confirm { background: var(--red); color: #fff; }
+    .modal-sheet .pin-input { background: var(--panel-strong); color: #fff; border: 1px solid var(--line); }
+
+    /* Toast dark variant */
+    .toast { background: var(--panel) !important; border: 1px solid var(--line); color: #fff; }
+    .toast button { color: var(--red); }
+
+    /* Map view recolors */
+    .map { filter: invert(0.92) hue-rotate(180deg) brightness(0.85); }
+
+    /* ============================================================
+       HOME — new layout
+       ============================================================ */
+    .home-hero {
+      padding: 18px 18px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .home-hero .tagline {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+      color: #fff;
+    }
+    .home-hero .tagline .accent {
+      color: var(--red);
+    }
+    .home-hero .sub {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .status-card {
+      margin: 0 16px 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .status-card .status-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .status-card .status-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #2f7d4f;
+      box-shadow: 0 0 0 4px rgba(47,125,79,0.18);
+    }
+    .status-card.alert-active { border-color: var(--red); background: rgba(239,59,59,0.08); }
+    .status-card.alert-active .status-dot { background: var(--red); box-shadow: 0 0 0 4px rgba(239,59,59,0.22); animation: pulseDot 1.2s ease-in-out infinite; }
+    .status-card #alertSub { color: var(--muted); font-size: 13px; }
+    @keyframes pulseDot {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(239,59,59,0.22); }
+      50% { box-shadow: 0 0 0 9px rgba(239,59,59,0.05); }
+    }
+
+    .press-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 6px 16px 12px;
+      min-height: 0;
+    }
+    .press-button {
+      position: relative;
+      width: 230px;
+      height: 230px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ff5252, var(--red) 60%, var(--red-dark));
+      box-shadow:
+        0 18px 60px rgba(239,59,59,0.35),
+        inset 0 -10px 20px rgba(0,0,0,0.25),
+        inset 0 6px 14px rgba(255,255,255,0.15);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 80ms ease, box-shadow 200ms ease;
+      cursor: pointer;
+      isolation: isolate;
+      border: 0;
+    }
+    .press-button::before,
+    .press-button::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid rgba(239,59,59,0.45);
+      animation: pressRing 2.4s ease-out infinite;
+      pointer-events: none;
+    }
+    .press-button::after { animation-delay: 1.2s; }
+    @keyframes pressRing {
+      0% { transform: scale(0.92); opacity: 0.9; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    .press-button:active {
+      transform: scale(0.97);
+      box-shadow:
+        0 6px 22px rgba(239,59,59,0.4),
+        inset 0 -8px 14px rgba(0,0,0,0.35);
+    }
+    .press-label {
+      text-align: center;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+    }
+    .press-label .top { display: block; font-size: 16px; opacity: 0.85; }
+    .press-label .bottom { display: block; font-size: 34px; margin-top: 6px; }
+    .press-hint { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+
+    .quick-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 16px 12px;
+    }
+    .quick-btn {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: #fff;
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .quick-btn.safe { background: var(--panel); }
+    .quick-btn .ic { color: var(--red); font-weight: 900; }
+
+    .chip-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 0 16px 16px;
+    }
+    .chip {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .chip b {
+      display: block;
+      font-size: 18px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .chip span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Make home view fill the .content area so the press button can center */
+    #homeView.view.active {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+    .content { padding: 0 !important; }
+
+    /* Hidden stubs — JS still writes to these IDs */
+    .js-stub { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="phone" aria-label="BEACON mobile app">
+      <div class="screen">
+        <div class="status-bar">
+          <span id="clock">9:41</span>
+          <div class="status-dots" aria-hidden="true">
+            <span class="signal-dot"></span>
+            <span class="signal-dot"></span>
+            <span class="signal-dot"></span>
+            <span class="battery"><span class="battery-fill"></span></span>
+          </div>
+        </div>
+
+        <header class="app-top">
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true"></div>
+            <div>
+              <h1>BEACON</h1>
+              <p>Safety network</p>
+            </div>
+          </div>
+          <span class="pill" title="Device connection status">
+            <span id="connectionDot" class="dot"></span>
+            <span id="connectionText">Not paired</span>
+          </span>
+        </header>
+
+        <div class="content">
+          <section id="homeView" class="view active" aria-label="Home">
+            <div class="home-hero">
+              <div class="tagline">Seconds Save <span class="accent">LIVES</span></div>
+              <div class="sub">One tap. Instant alert. Live location.</div>
+            </div>
+
+            <div id="alertStrip" class="status-card">
+              <div class="status-row">
+                <span class="status-dot" id="statusDot"></span>
+                <strong id="alertTitle">No Active Alert</strong>
+              </div>
+              <span id="alertSub">Ready. Press the button below or your BEACON device.</span>
+            </div>
+
+            <div class="press-wrap">
+              <button id="triggerAlertButton" class="press-button" aria-label="Press BEACON to send emergency alert">
+                <span class="press-label">
+                  <span class="top">PRESS</span>
+                  <span class="bottom">BEACON</span>
+                </span>
+              </button>
+              <span class="press-hint" id="pressHint">Sends to trusted contacts</span>
+            </div>
+
+            <div class="quick-row">
+              <button class="quick-btn" id="safeButton" type="button">
+                <span class="ic">✓</span> I'm Safe
+              </button>
+              <button class="quick-btn" id="openMapFromStrip" type="button">
+                <span class="ic">⌖</span> Live Map
+              </button>
+            </div>
+
+            <div class="chip-row">
+              <div class="chip"><b id="batteryMetric">--</b><span>Battery</span></div>
+              <div class="chip"><b id="contactsMetric">0</b><span>Contacts</span></div>
+              <div class="chip"><b id="latencyMetric">--</b><span>Send</span></div>
+            </div>
+
+            <!-- Hidden stubs preserved so existing JS keeps working -->
+            <div class="js-stub">
+              <span id="alertIcon">OK</span>
+              <span id="deviceName"></span>
+              <span id="deviceMode"></span>
+              <span id="deviceDescription"></span>
+              <span id="lastUpdated"></span>
+              <div id="timeline"></div>
+              <button id="pairButton"></button>
+              <button id="simulatePairButton"></button>
+              <select id="singleClick"></select>
+              <select id="holdClick"></select>
+            </div>
+          </section>
+
+          <section id="contactsView" class="view" aria-label="Contacts">
+            <article class="panel">
+              <div class="panel-title">
+                <h2>Trusted contacts</h2>
+                <span id="contactsCount">2 active</span>
+              </div>
+              <div class="contact-list" id="contactList"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-title">
+                <h2>Add contact</h2>
+                <span>Invite later</span>
+              </div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="contactName">Name</label>
+                  <input id="contactName" autocomplete="name" placeholder="Friend or family member" />
+                </div>
+                <div class="field">
+                  <label for="contactRole">Relationship</label>
+                  <input id="contactRole" placeholder="Best friend, parent, teammate" />
+                </div>
+                <button class="primary-button" id="pickContactButton" style="background:var(--green);color:#fff;">
+                  Pick from Contacts
+                </button>
+                <button class="primary-button" id="addContactButton">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                  Add manually
+                </button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-title">
+                <h2>Contact rules</h2>
+                <span>Emergency</span>
+              </div>
+              <div class="timeline">
+                <div class="event">
+                  <span class="event-marker active"></span>
+                  <div>
+                    <h3>Emergency alert</h3>
+                    <p>Notify all active trusted contacts with map, timestamp, and navigation controls.</p>
+                  </div>
+                </div>
+                <div class="event">
+                  <span class="event-marker"></span>
+                  <div>
+                    <h3>Check-in alert</h3>
+                    <p>Notify priority contacts first. Escalate only if nobody responds within five minutes.</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section id="mapView" class="view" aria-label="Alert map">
+            <article class="panel flush">
+              <div class="map" role="img" aria-label="Map showing BEACON alert location and responder route">
+                <span class="road one"></span>
+                <span class="road two"></span>
+                <span class="road three"></span>
+                <svg class="route-line" viewBox="0 0 360 306" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M82 236 C118 218, 129 193, 154 177 S217 144, 242 127" />
+                </svg>
+                <span class="responder-pin"></span>
+                <span class="pin"></span>
+                <span class="map-label responder">You</span>
+                <span class="map-label alert" id="mapAlertLabel">BEACON alert</span>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-title">
+                <h2>Fastest route</h2>
+                <span id="routeStatus">Simulated</span>
+              </div>
+              <div class="eta-row">
+                <div class="eta-box">
+                  <strong id="etaMetric">8 min</strong>
+                  <span>ETA</span>
+                </div>
+                <div class="eta-box">
+                  <strong id="distanceMetric">1.8 mi</strong>
+                  <span>Distance</span>
+                </div>
+                <div class="eta-box">
+                  <strong id="accuracyMetric">12 m</strong>
+                  <span>Accuracy</span>
+                </div>
+              </div>
+              <div class="button-row">
+                <button class="primary-button" id="navigateButton">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+                  Navigate
+                </button>
+                <button class="secondary-button" id="respondButton">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+                  Responding
+                </button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-title">
+                <h2>Alert details</h2>
+                <span id="alertStatusLabel">Inactive</span>
+              </div>
+              <div class="timeline">
+                <div class="event">
+                  <span class="event-marker active"></span>
+                  <div>
+                    <h3 id="alertLocationTitle">No alert location yet</h3>
+                    <p id="alertLocationCopy">Press BEACON to capture the phone's current GPS location or use the fallback demo location.</p>
+                  </div>
+                </div>
+                <div class="event">
+                  <span class="event-marker"></span>
+                  <div>
+                    <h3>Privacy window</h3>
+                    <p>In the production app, alert links should expire after the emergency window closes.</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section id="settingsView" class="view" aria-label="Settings">
+            <article class="panel">
+              <div class="panel-title">
+                <h2>Safety settings</h2>
+                <span>Owner</span>
+              </div>
+              <div class="contact-list">
+                <label class="contact-row">
+                  <span class="avatar green">5</span>
+                  <span>
+                    <strong>Cancel countdown</strong>
+                    <small>Give 5 seconds to cancel accidental presses.</small>
+                  </span>
+                  <span class="toggle"><input type="checkbox" checked /><span class="track"></span></span>
+                </label>
+                <label class="contact-row">
+                  <span class="avatar coral">S</span>
+                  <span>
+                    <strong>Silent emergency</strong>
+                    <small>Send alert without sound or vibration.</small>
+                  </span>
+                  <span class="toggle"><input type="checkbox" /><span class="track"></span></span>
+                </label>
+                <label class="contact-row">
+                  <span class="avatar">L</span>
+                  <span>
+                    <strong>Live location</strong>
+                    <small>Keep updating location after the first alert.</small>
+                  </span>
+                  <span class="toggle"><input type="checkbox" checked /><span class="track"></span></span>
+                </label>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-title">
+                <h2>Prototype notes</h2>
+                <span>Next build</span>
+              </div>
+              <div class="timeline">
+                <div class="event">
+                  <span class="event-marker active"></span>
+                  <div>
+                    <h3>BLE UUIDs are included</h3>
+                    <p>The companion Arduino sketch uses the same service and characteristic IDs as this prototype.</p>
+                  </div>
+                </div>
+                <div class="event">
+                  <span class="event-marker"></span>
+                  <div>
+                    <h3>Real mobile app comes next</h3>
+                    <p>React Native can reuse this flow while replacing Web Bluetooth with native BLE.</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </section>
+        </div>
+
+        <nav class="tabbar" aria-label="Primary">
+          <button class="tab active" data-view="homeView">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+            Home
+          </button>
+          <button class="tab" data-view="contactsView">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Contacts
+          </button>
+          <button class="tab" data-view="mapView">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l-6 3V6l6-3 6 3 6-3v15l-6 3-6-3z"/><path d="M9 3v15"/><path d="M15 6v15"/></svg>
+            Map
+          </button>
+          <button class="tab" data-view="settingsView">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/><path d="M19.4 15a1.8 1.8 0 0 0 .36 1.98l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.8 1.8 0 0 0-1.98-.36 1.8 1.8 0 0 0-1.08 1.65V21a2 2 0 1 1-4 0v-.09a1.8 1.8 0 0 0-1.08-1.65 1.8 1.8 0 0 0-1.98.36l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.8 1.8 0 0 0 4.6 15a1.8 1.8 0 0 0-1.65-1.08H3a2 2 0 1 1 0-4h.09A1.8 1.8 0 0 0 4.74 8.84a1.8 1.8 0 0 0-.36-1.98l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.8 1.8 0 0 0 1.98.36H9.2A1.8 1.8 0 0 0 10.28 2.7V3a2 2 0 1 1 4 0v-.09a1.8 1.8 0 0 0 1.08 1.65 1.8 1.8 0 0 0 1.98-.36l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.8 1.8 0 0 0-.36 1.98V9.2a1.8 1.8 0 0 0 1.65 1.08H21a2 2 0 1 1 0 4h-.09A1.8 1.8 0 0 0 19.4 15z"/></svg>
+            Settings
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <aside class="console" aria-label="Prototype control panel">
+      <div>
+        <h2>BEACON prototype console</h2>
+        <p>This is the first product experience: pair a device, customize contacts, simulate a button press, and see the responder route. Real hardware can connect through Web Bluetooth in supported desktop Chrome/Android Chrome browsers.</p>
+      </div>
+
+      <div class="console-grid">
+        <div class="console-card">
+          <b id="consoleDevice">Offline</b>
+          <span>Device state</span>
+        </div>
+        <div class="console-card">
+          <b id="consoleAlerts">0</b>
+          <span>Alerts sent in this session</span>
+        </div>
+        <div class="console-card">
+          <b id="consoleRecipients">2</b>
+          <span>Trusted contacts receiving alerts</span>
+        </div>
+      </div>
+
+      <div class="responder-view">
+        <section class="desktop-panel">
+          <h3>Demo script</h3>
+          <ol class="code-list">
+            <li><span class="num">1</span><span>Tap <b>Simulate</b> or <b>Pair BEACON</b> if your browser supports Web Bluetooth.</span></li>
+            <li><span class="num">2</span><span>Add or toggle trusted contacts from the Contacts tab.</span></li>
+            <li><span class="num">3</span><span>Tap <b>Press BEACON</b> to create an emergency alert.</span></li>
+            <li><span class="num">4</span><span>Open Map, then tap <b>Navigate</b> to launch route directions.</span></li>
+          </ol>
+        </section>
+
+        <section class="desktop-panel">
+          <h3>Responder notification</h3>
+          <div id="responderNotice" class="alert-strip inactive">
+            <div class="alert-icon">OK</div>
+            <div class="alert-copy">
+              <strong>No alert received</strong>
+              <span>Contacts will see a location and route when BEACON is pressed.</span>
+            </div>
+          </div>
+          <button class="danger-button" id="desktopTrigger">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            Trigger demo alert
+          </button>
+        </section>
+      </div>
+    </aside>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">
+    <span id="toastText">Ready</span>
+    <button id="toastClose">Close</button>
+  </div>
+
+  <div id="onboarding" class="overlay" aria-label="BEACON setup">
+    <div class="ob-progress">
+      <span id="obProg1"></span><span id="obProg2"></span><span id="obProg3"></span>
+    </div>
+
+    <section class="ob-step active" data-step="1">
+      <h1>Add trusted contacts</h1>
+      <p class="lead">BEACON alerts these people the instant you press the button. Add at least one to continue.</p>
+      <button id="obPickContact" class="ob-cta" type="button" style="background:var(--green);">Pick from Contacts</button>
+      <details style="margin-top:-4px;">
+        <summary style="color:var(--muted);font-size:13px;cursor:pointer;">Or add manually</summary>
+        <div class="row" style="margin-top:10px;">
+          <input id="obContactName" type="text" placeholder="Name" autocomplete="off" />
+          <input id="obContactPhone" type="tel" placeholder="Phone" autocomplete="off" />
+        </div>
+        <button id="obAddContact" class="ob-secondary" type="button" style="margin-top:8px;">+ Add manually</button>
+      </details>
+      <div id="obContactList" class="ob-list"></div>
+      <div id="obError1" class="ob-error" aria-live="polite"></div>
+      <div class="ob-footer">
+        <button id="obNext1" class="ob-cta" type="button" disabled>Continue</button>
+      </div>
+    </section>
+
+    <section class="ob-step" data-step="2">
+      <h1>Choose a safety PIN</h1>
+      <p class="lead">A 4-digit PIN cancels an active alert. Without the PIN, no one — not even someone holding your phone — can stop it.</p>
+      <input id="obPin1" class="pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="• • • •" />
+      <input id="obPin2" class="pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="Confirm" />
+      <div id="obError2" class="ob-error" aria-live="polite"></div>
+      <div class="ob-footer">
+        <button id="obBack2" class="ob-secondary" type="button">Back</button>
+        <button id="obNext2" class="ob-cta" type="button" disabled>Continue</button>
+      </div>
+    </section>
+
+    <section class="ob-step" data-step="3">
+      <h1>Pair your BEACON</h1>
+      <p class="lead">You can pair a real BEACON keychain over Bluetooth, or skip and use a simulated device for now.</p>
+      <div class="ob-footer">
+        <button id="obPairReal" class="ob-cta" type="button">Pair a real device</button>
+        <button id="obPairSim" class="ob-secondary" type="button">Skip — use simulated BEACON</button>
+        <button id="obBack3" class="ob-secondary" type="button">Back</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="pinModal" class="modal-backdrop" aria-label="Confirm cancel">
+    <div class="modal-sheet">
+      <h2>Cancel active alert?</h2>
+      <p>Enter your 4-digit safety PIN to send the all-clear. Wrong PINs keep the alert running.</p>
+      <input id="pinModalInput" class="pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="• • • •" />
+      <div id="pinModalError" class="modal-error" aria-live="polite"></div>
+      <div class="modal-actions">
+        <button id="pinModalCancel" class="modal-cancel" type="button">Keep alert active</button>
+        <button id="pinModalConfirm" class="modal-confirm" type="button">Cancel alert</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="ble.js"></script>
+  <script>
+    /* Legacy Web Bluetooth UUIDs from the desktop preview demo. The real hardware
+     * uses the UUIDs defined in ble.js (BeaconBLE.SERVICE / BeaconBLE.CHAR). */
+    const BEACON_SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+    const BEACON_BUTTON_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+
+    const STORAGE_KEY = "beacon.state.v1";
+    const DEFAULT_STATE = {
+      connected: false,
+      simulated: false,
+      battery: null,
+      alertCount: 0,
+      lastLocation: null,
+      alertActive: false,
+      contacts: [],
+      pin: null,
+      onboardingDone: false
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { ...DEFAULT_STATE };
+        const parsed = JSON.parse(raw);
+        return { ...DEFAULT_STATE, ...parsed, connected: false, simulated: false, alertActive: false, lastLocation: null };
+      } catch (_) {
+        return { ...DEFAULT_STATE };
+      }
+    }
+
+    function saveState() {
+      try {
+        const { connected, simulated, lastLocation, alertActive, battery, ...persisted } = state;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
+      } catch (_) {}
+    }
+
+    const state = loadState();
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    const elements = {
+      clock: $("#clock"),
+      connectionDot: $("#connectionDot"),
+      connectionText: $("#connectionText"),
+      deviceDescription: $("#deviceDescription"),
+      batteryMetric: $("#batteryMetric"),
+      contactsMetric: $("#contactsMetric"),
+      latencyMetric: $("#latencyMetric"),
+      alertStrip: $("#alertStrip"),
+      alertIcon: $("#alertIcon"),
+      alertTitle: $("#alertTitle"),
+      alertSub: $("#alertSub"),
+      timeline: $("#timeline"),
+      lastUpdated: $("#lastUpdated"),
+      contactList: $("#contactList"),
+      contactsCount: $("#contactsCount"),
+      contactsMetric: $("#contactsMetric"),
+      consoleDevice: $("#consoleDevice"),
+      consoleAlerts: $("#consoleAlerts"),
+      consoleRecipients: $("#consoleRecipients"),
+      responderNotice: $("#responderNotice"),
+      alertStatusLabel: $("#alertStatusLabel"),
+      alertLocationTitle: $("#alertLocationTitle"),
+      alertLocationCopy: $("#alertLocationCopy"),
+      mapAlertLabel: $("#mapAlertLabel"),
+      etaMetric: $("#etaMetric"),
+      distanceMetric: $("#distanceMetric"),
+      accuracyMetric: $("#accuracyMetric"),
+      routeStatus: $("#routeStatus"),
+      toast: $("#toast"),
+      toastText: $("#toastText")
+    };
+
+    function updateClock() {
+      const now = new Date();
+      elements.clock.textContent = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    }
+
+    function showToast(message) {
+      elements.toastText.textContent = message;
+      elements.toast.classList.add("show");
+      clearTimeout(showToast.timeout);
+      showToast.timeout = setTimeout(() => elements.toast.classList.remove("show"), 4200);
+    }
+
+    function setConnected(connected, simulated = false) {
+      state.connected = connected;
+      state.simulated = simulated;
+      state.battery = connected ? 84 : null;
+      elements.connectionDot.classList.toggle("connected", connected);
+      elements.connectionText.textContent = connected ? (simulated ? "Simulated" : "Paired") : "Not paired";
+      elements.deviceDescription.textContent = connected
+        ? "BEACON is ready. Button presses can trigger alert events."
+        : "Ready to pair over BLE. You can also run the simulated device for a demo.";
+      elements.batteryMetric.textContent = connected ? `${state.battery}%` : "--";
+      elements.consoleDevice.textContent = connected ? (simulated ? "Simulated" : "Paired") : "Offline";
+      addTimelineEvent(connected ? "Device paired" : "Device offline", connected ? "The app can now listen for BEACON button events." : "Pair again before sending real hardware events.", connected);
+    }
+
+    function activeContacts() {
+      return state.contacts.filter((contact) => contact.active);
+    }
+
+    function updateContactMetrics() {
+      const active = activeContacts().length;
+      elements.contactsMetric.textContent = String(active);
+      elements.contactsCount.textContent = `${active} active`;
+      elements.consoleRecipients.textContent = String(active);
+    }
+
+    function renderContacts() {
+      elements.contactList.innerHTML = "";
+      state.contacts.forEach((contact) => {
+        const row = document.createElement("label");
+        row.className = "contact-row";
+        row.innerHTML = `
+          <span class="avatar ${contact.color}">${escapeHtml(contact.name.charAt(0).toUpperCase())}</span>
+          <span>
+            <strong>${escapeHtml(contact.name)}</strong>
+            <small>${escapeHtml(contact.role)}</small>
+          </span>
+          <span class="toggle">
+            <input type="checkbox" ${contact.active ? "checked" : ""} data-contact-id="${contact.id}" />
+            <span class="track"></span>
+          </span>
+        `;
+        elements.contactList.appendChild(row);
+      });
+
+      $$("[data-contact-id]").forEach((checkbox) => {
+        checkbox.addEventListener("change", (event) => {
+          const id = Number(event.target.dataset.contactId);
+          const contact = state.contacts.find((item) => item.id === id);
+          contact.active = event.target.checked;
+          updateContactMetrics();
+          showToast(`${contact.name} ${contact.active ? "will receive" : "will not receive"} BEACON alerts.`);
+        });
+      });
+
+      updateContactMetrics();
+    }
+
+    function escapeHtml(value) {
+      return value.replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function addTimelineEvent(title, copy, active = false) {
+      const event = document.createElement("div");
+      event.className = "event";
+      event.innerHTML = `
+        <span class="event-marker ${active ? "active" : ""}"></span>
+        <div>
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(copy)}</p>
+        </div>
+      `;
+      elements.timeline.prepend(event);
+      elements.lastUpdated.textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    }
+
+    /* Pair via the real BLE plugin (iOS/Android device). Falls back to a
+     * simulated pair when the plugin isn't present, so the desktop preview and
+     * iOS Simulator still work for demos. */
+    async function pairBeacon() {
+      if (!window.BeaconBLE || !window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.BluetoothLe) {
+        setConnected(true, true);
+        showToast("Bluetooth isn't available here — running simulated BEACON.");
+        return;
+      }
+      try {
+        showToast("Initializing Bluetooth...");
+        await BeaconBLE.initBLE();
+        showToast("Scanning for Beacon-001…");
+        const found = await BeaconBLE.scanForBeacon(10000);
+        if (!found) {
+          setConnected(false, false);
+          showToast("No BEACON found nearby. Make sure the device is on and in range.");
+          return;
+        }
+        showToast(`Found ${found.name}. Connecting…`);
+        await BeaconBLE.connectToBeacon(found.deviceId);
+        await BeaconBLE.subscribeToButtonPress(() => {
+          addTimelineEvent("Hardware press", "BEACON keychain reported a press over BLE.", true);
+          triggerAlert("hardware");
+        });
+        setConnected(true, false);
+        showToast(`${found.name} paired and listening.`);
+      } catch (error) {
+        const msg = (error && error.message) || String(error);
+        setConnected(false, false);
+        showToast("Pairing failed: " + msg);
+      }
+    }
+
+    /* Called once on boot when an onboarded user already has a saved deviceId. */
+    async function tryAutoReconnect() {
+      if (!window.BeaconBLE || !window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.BluetoothLe) return;
+      try {
+        await BeaconBLE.initBLE();
+      } catch (_) { return; }
+      const ok = await BeaconBLE.reconnectFromStorage();
+      if (!ok) return;
+      try {
+        await BeaconBLE.subscribeToButtonPress(() => {
+          addTimelineEvent("Hardware press", "BEACON keychain reported a press over BLE.", true);
+          triggerAlert("hardware");
+        });
+        setConnected(true, false);
+        showToast("Reconnected to your BEACON.");
+      } catch (err) {
+        showToast("Reconnected but couldn't subscribe to button presses.");
+      }
+    }
+
+    function onBeaconNotification(event) {
+      const value = event.target.value;
+      let message = "";
+      try {
+        message = new TextDecoder().decode(value);
+      } catch {
+        message = "PRESS:EMERGENCY:84";
+      }
+
+      const batteryMatch = message.match(/(\d{1,3})$/);
+      if (batteryMatch) {
+        state.battery = Math.min(100, Number(batteryMatch[1]));
+        elements.batteryMetric.textContent = `${state.battery}%`;
+      }
+      triggerAlert("hardware");
+    }
+
+    function getLocation() {
+      const fallback = {
+        lat: 40.73061,
+        lng: -73.935242,
+        accuracy: 12,
+        source: "Demo fallback"
+      };
+
+      if (!navigator.geolocation) {
+        return Promise.resolve(fallback);
+      }
+
+      return new Promise((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+              accuracy: Math.round(position.coords.accuracy || 12),
+              source: "Phone GPS"
+            });
+          },
+          () => resolve(fallback),
+          { enableHighAccuracy: true, timeout: 5000, maximumAge: 30000 }
+        );
+      });
+    }
+
+    async function triggerAlert(source = "simulated") {
+      if (!state.connected) {
+        setConnected(true, true);
+      }
+
+      const start = performance.now();
+      showToast("BEACON alert is sending...");
+      addTimelineEvent("Button pressed", source === "hardware" ? "Hardware BEACON sent a BLE notification." : "Prototype button press created a simulated BLE event.", true);
+      const location = await getLocation();
+      const latency = Math.max(180, Math.round(performance.now() - start));
+      state.alertCount += 1;
+      state.alertActive = true;
+      state.lastLocation = location;
+      saveState();
+      elements.latencyMetric.textContent = `${latency}ms`;
+      elements.consoleAlerts.textContent = String(state.alertCount);
+      elements.alertStrip.classList.add("alert-active");
+      elements.alertIcon.textContent = "!";
+      elements.alertTitle.textContent = "ALERT ACTIVE";
+      elements.alertSub.textContent = `${activeContacts().length} contacts notified at ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+      elements.alertStatusLabel.textContent = "Active";
+      elements.alertLocationTitle.textContent = `${location.source}: ${location.lat.toFixed(5)}, ${location.lng.toFixed(5)}`;
+      elements.alertLocationCopy.textContent = `Accuracy about ${location.accuracy} meters. Contacts can open the route from this alert.`;
+      elements.mapAlertLabel.textContent = location.source === "Phone GPS" ? "Live alert" : "Demo alert";
+      elements.accuracyMetric.textContent = `${location.accuracy} m`;
+      elements.routeStatus.textContent = location.source;
+      updateResponderNotice();
+      addTimelineEvent("Contacts notified", `${activeContacts().map((contact) => contact.name).join(", ") || "No active contacts"} received the alert payload.`, true);
+      showToast("Emergency alert sent to trusted contacts.");
+      switchView("mapView");
+    }
+
+    function updateResponderNotice() {
+      const location = state.lastLocation;
+      elements.responderNotice.classList.remove("inactive");
+      elements.responderNotice.innerHTML = `
+        <div class="alert-icon">!</div>
+        <div class="alert-copy">
+          <strong>Ketav triggered BEACON</strong>
+          <span>${location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : "Location pending"} - fastest route ready.</span>
+        </div>
+      `;
+    }
+
+    function markSafe() {
+      if (!state.alertActive) {
+        showToast("No active alert to cancel.");
+        return;
+      }
+      openPinModal();
+    }
+
+    function finalizeMarkSafe() {
+      state.alertActive = false;
+      saveState();
+      elements.alertStrip.classList.remove("alert-active");
+      elements.alertIcon.textContent = "OK";
+      elements.alertTitle.textContent = "Marked Safe";
+      elements.alertSub.textContent = "All-clear sent to trusted contacts.";
+      elements.alertStatusLabel.textContent = "Resolved";
+      elements.responderNotice.classList.add("inactive");
+      elements.responderNotice.innerHTML = `
+        <div class="alert-icon">OK</div>
+        <div class="alert-copy">
+          <strong>All-clear sent</strong>
+          <span>Contacts know the BEACON alert is resolved.</span>
+        </div>
+      `;
+      addTimelineEvent("All-clear sent", "The owner marked themselves safe and closed the active alert.", true);
+      showToast("All-clear sent to trusted contacts.");
+    }
+
+    function navigateToAlert() {
+      const location = state.lastLocation || { lat: 40.73061, lng: -73.935242 };
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}&travelmode=driving`;
+      window.open(url, "_blank", "noopener,noreferrer");
+      showToast("Opening fastest route in Maps.");
+    }
+
+    function switchView(viewId) {
+      $$(".view").forEach((view) => view.classList.toggle("active", view.id === viewId));
+      $$(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.view === viewId));
+    }
+
+    function addContact() {
+      const nameInput = $("#contactName");
+      const roleInput = $("#contactRole");
+      const name = nameInput.value.trim();
+      const role = roleInput.value.trim() || "Trusted contact";
+      if (!name) {
+        showToast("Add a contact name first.");
+        return;
+      }
+      const colors = ["", "coral", "green"];
+      state.contacts.push({
+        id: Date.now(),
+        name,
+        role,
+        active: true,
+        color: colors[state.contacts.length % colors.length]
+      });
+      nameInput.value = "";
+      roleInput.value = "";
+      saveState();
+      renderContacts();
+      showToast(`${name} added to trusted contacts.`);
+    }
+
+    function bindEvents() {
+      $$(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => switchView(tab.dataset.view));
+      });
+      $("#pairButton").addEventListener("click", pairBeacon);
+      $("#simulatePairButton").addEventListener("click", () => {
+        setConnected(true, true);
+        showToast("Simulated BEACON is paired.");
+      });
+      $("#triggerAlertButton").addEventListener("click", () => triggerAlert("simulated"));
+      $("#desktopTrigger").addEventListener("click", () => triggerAlert("simulated"));
+      $("#safeButton").addEventListener("click", markSafe);
+      $("#openMapFromStrip").addEventListener("click", () => switchView("mapView"));
+      $("#navigateButton").addEventListener("click", navigateToAlert);
+      $("#respondButton").addEventListener("click", () => showToast("Responder status sent: on the way."));
+      $("#addContactButton").addEventListener("click", addContact);
+      $("#pickContactButton").addEventListener("click", async () => {
+        const picked = await pickNativeContact();
+        if (!picked) return;
+        state.contacts.push({
+          id: Date.now(),
+          name: picked.name,
+          role: picked.phone,
+          active: true,
+          color: ["", "coral", "green"][state.contacts.length % 3]
+        });
+        saveState();
+        renderContacts();
+        showToast(`${picked.name} added to trusted contacts.`);
+      });
+      $("#toastClose").addEventListener("click", () => elements.toast.classList.remove("show"));
+    }
+
+    /* ---------- Native contact picker ---------- */
+    async function pickNativeContact() {
+      const plugin = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Contacts;
+      if (!plugin || !plugin.pickContact) {
+        showToast("Contact picker only works in the iOS app.");
+        return null;
+      }
+      try {
+        const result = await plugin.pickContact({
+          projection: { name: true, phones: true }
+        });
+        const c = result && result.contact;
+        if (!c) return null;
+        const name = (c.name && (c.name.display || [c.name.given, c.name.family].filter(Boolean).join(" "))) || "Contact";
+        const phone = (c.phones && c.phones[0] && c.phones[0].number) || "";
+        return { name, phone };
+      } catch (err) {
+        if (String(err).toLowerCase().includes("cancel")) return null;
+        showToast("Couldn't open Contacts.");
+        return null;
+      }
+    }
+
+    /* ---------- Onboarding flow ---------- */
+    const obState = { step: 1, contacts: [] };
+
+    function obSetStep(step) {
+      obState.step = step;
+      $$("#onboarding .ob-step").forEach((el) => {
+        el.classList.toggle("active", Number(el.dataset.step) === step);
+      });
+      ["obProg1", "obProg2", "obProg3"].forEach((id, i) => {
+        document.getElementById(id).classList.toggle("done", i < step);
+      });
+    }
+
+    function obRenderContacts() {
+      const list = $("#obContactList");
+      if (obState.contacts.length === 0) {
+        list.innerHTML = `<div class="ob-chip" style="background:transparent;color:var(--muted);justify-content:center;">No contacts yet</div>`;
+      } else {
+        list.innerHTML = obState.contacts
+          .map(
+            (c, i) => `
+            <div class="ob-chip">
+              <div><strong>${escapeHtml(c.name)}</strong><div style="color:var(--muted);font-size:12px;">${escapeHtml(c.phone || "")}</div></div>
+              <button type="button" data-ob-remove="${i}">Remove</button>
+            </div>`
+          )
+          .join("");
+        $$("#obContactList [data-ob-remove]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            obState.contacts.splice(Number(btn.dataset.obRemove), 1);
+            obRenderContacts();
+            obValidate1();
+          });
+        });
+      }
+    }
+
+    function obValidate1() {
+      $("#obNext1").disabled = obState.contacts.length === 0;
+    }
+
+    function obValidate2() {
+      const a = $("#obPin1").value;
+      const b = $("#obPin2").value;
+      $("#obNext2").disabled = !(a.length === 4 && /^\d{4}$/.test(a) && a === b);
+    }
+
+    function obAddContact() {
+      const name = $("#obContactName").value.trim();
+      const phone = $("#obContactPhone").value.trim();
+      const err = $("#obError1");
+      err.textContent = "";
+      if (!name) { err.textContent = "Enter a name."; return; }
+      if (!phone) { err.textContent = "Enter a phone number."; return; }
+      obState.contacts.push({ name, phone });
+      $("#obContactName").value = "";
+      $("#obContactPhone").value = "";
+      obRenderContacts();
+      obValidate1();
+    }
+
+    function finishOnboarding() {
+      state.contacts = obState.contacts.map((c, i) => ({
+        id: Date.now() + i,
+        name: c.name,
+        role: c.phone,
+        active: true,
+        color: ["", "coral", "green"][i % 3]
+      }));
+      state.pin = $("#obPin1").value;
+      state.onboardingDone = true;
+      saveState();
+      renderContacts();
+      $("#onboarding").classList.remove("show");
+    }
+
+    function bindOnboarding() {
+      $("#obAddContact").addEventListener("click", obAddContact);
+      $("#obPickContact").addEventListener("click", async () => {
+        const picked = await pickNativeContact();
+        if (!picked) return;
+        obState.contacts.push(picked);
+        obRenderContacts();
+        obValidate1();
+      });
+      $("#obNext1").addEventListener("click", () => obSetStep(2));
+      $("#obBack2").addEventListener("click", () => obSetStep(1));
+      $("#obNext2").addEventListener("click", () => obSetStep(3));
+      $("#obBack3").addEventListener("click", () => obSetStep(2));
+      ["obPin1", "obPin2"].forEach((id) => {
+        $("#" + id).addEventListener("input", obValidate2);
+      });
+      $("#obPairReal").addEventListener("click", async () => {
+        finishOnboarding();
+        try { await pairBeacon(); } catch (_) {}
+      });
+      $("#obPairSim").addEventListener("click", () => {
+        finishOnboarding();
+        setConnected(true, true);
+        showToast("Simulated BEACON is paired.");
+      });
+      obRenderContacts();
+      obValidate1();
+    }
+
+    /* ---------- PIN-protected cancel ---------- */
+    function openPinModal() {
+      $("#pinModalInput").value = "";
+      $("#pinModalError").textContent = "";
+      $("#pinModal").classList.add("show");
+      setTimeout(() => $("#pinModalInput").focus(), 100);
+    }
+    function closePinModal() { $("#pinModal").classList.remove("show"); }
+    function confirmPin() {
+      const entered = $("#pinModalInput").value;
+      if (!state.pin) {
+        closePinModal();
+        finalizeMarkSafe();
+        return;
+      }
+      if (entered === state.pin) {
+        closePinModal();
+        finalizeMarkSafe();
+      } else {
+        $("#pinModalError").textContent = "Incorrect PIN. Alert is still active.";
+        $("#pinModalInput").value = "";
+      }
+    }
+    function bindPinModal() {
+      $("#pinModalCancel").addEventListener("click", closePinModal);
+      $("#pinModalConfirm").addEventListener("click", confirmPin);
+      $("#pinModalInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") confirmPin();
+      });
+    }
+
+    updateClock();
+    setInterval(updateClock, 10000);
+    renderContacts();
+    bindEvents();
+    bindOnboarding();
+    bindPinModal();
+
+    if (!state.onboardingDone) {
+      $("#onboarding").classList.add("show");
+      obSetStep(1);
+    } else {
+      tryAutoReconnect();
+    }
+  </script>
+</body>
+</html>

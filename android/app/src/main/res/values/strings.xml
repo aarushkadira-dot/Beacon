@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">BEACON</string>
+    <string name="title_activity_main">BEACON</string>
+    <string name="package_name">com.beacon.app</string>
+    <string name="custom_url_scheme">com.beacon.app</string>
+</resources>
