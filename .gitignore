@@ -1,0 +1,32 @@
+.DS_Store
+node_modules/
+dist/
+build/
+.env
+.env.local
+*.log
+
+# iOS
+ios/App/Pods/
+ios/App/build/
+ios/App/DerivedData/
+ios/App/Podfile.lock
+ios/.DS_Store
+*.xcuserdata/
+xcuserdata/
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/captures/
+android/.idea/
+android/app/release/
+*.iml
+
+# Capacitor build artifacts
+www/cordova.js
+www/cordova_plugins.js
+ios/App/App/public/cordova.js
+ios/App/App/public/cordova_plugins.js

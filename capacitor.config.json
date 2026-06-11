@@ -1,0 +1,16 @@
+{
+  "appId": "com.aarushkadira.beacon",
+  "appName": "BEACON",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#e51b23",
+      "sound": "default"
+    }
+  }
+}
